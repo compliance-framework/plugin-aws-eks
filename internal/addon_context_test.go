@@ -31,16 +31,26 @@ func TestBuildAddonPolicyInputIncludesAddonContext(t *testing.T) {
 		t.Fatalf("input[addon] should contain the raw add-on map")
 	}
 
-	contextMap := input["addon_context"].(map[string]interface{})
-	current := contextMap["current"].(map[string]interface{})
+	contextMap, ok := input["addon_context"].(map[string]interface{})
+	if !ok {
+		t.Fatalf("input[addon_context] has unexpected type %T", input["addon_context"])
+	}
+	current, ok := contextMap["current"].(map[string]interface{})
+	if !ok {
+		t.Fatalf("addon_context[current] has unexpected type %T", contextMap["current"])
+	}
 	if current["cluster_name"] != "prod" {
 		t.Fatalf("current.cluster_name = %v, want prod", current["cluster_name"])
 	}
 	if current["addon_name"] != "vpc-cni" {
 		t.Fatalf("current.addon_name = %v, want vpc-cni", current["addon_name"])
 	}
-	if current["has_service_account_role"] != true {
-		t.Fatalf("current.has_service_account_role = %v, want true", current["has_service_account_role"])
+	hasRole, ok := current["has_service_account_role"].(bool)
+	if !ok {
+		t.Fatalf("current.has_service_account_role has unexpected type %T", current["has_service_account_role"])
+	}
+	if !hasRole {
+		t.Fatalf("current.has_service_account_role = %v, want true", hasRole)
 	}
 	if contextMap["cluster"] == nil {
 		t.Fatal("addon_context.cluster should include the parent cluster when available")

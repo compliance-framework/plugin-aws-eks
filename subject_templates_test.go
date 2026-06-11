@@ -81,12 +81,12 @@ func TestSubjectTemplateTitleAndDescriptionRenderWithUnderscoreLabels(t *testing
 
 	for _, subjectTemplate := range buildSubjectTemplates() {
 		for fieldName, templateText := range map[string]string{
-			"title":       subjectTemplate.TitleTemplate,
-			"description": subjectTemplate.DescriptionTemplate,
-			"purpose":     subjectTemplate.PurposeTemplate,
+			"title":       subjectTemplate.GetTitleTemplate(),
+			"description": subjectTemplate.GetDescriptionTemplate(),
+			"purpose":     subjectTemplate.GetPurposeTemplate(),
 		} {
-			if rendered := renderSubjectTemplate(t, subjectTemplate.Name, fieldName, templateText, labels); rendered == "" {
-				t.Fatalf("template %s rendered empty %s", subjectTemplate.Name, fieldName)
+			if rendered := renderSubjectTemplate(t, subjectTemplate.GetName(), fieldName, templateText, labels); rendered == "" {
+				t.Fatalf("template %s rendered empty %s", subjectTemplate.GetName(), fieldName)
 			}
 		}
 	}

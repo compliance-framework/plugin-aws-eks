@@ -59,8 +59,14 @@ func TestBuildClusterPolicyInputIncludesClusterContext(t *testing.T) {
 		t.Fatalf("input[cluster] should contain the raw cluster map")
 	}
 
-	contextMap := input["cluster_context"].(map[string]interface{})
-	current := contextMap["current"].(map[string]interface{})
+	contextMap, ok := input["cluster_context"].(map[string]interface{})
+	if !ok {
+		t.Fatalf("input[cluster_context] has unexpected type %T", input["cluster_context"])
+	}
+	current, ok := contextMap["current"].(map[string]interface{})
+	if !ok {
+		t.Fatalf("cluster_context[current] has unexpected type %T", contextMap["current"])
+	}
 	if current["cluster_name"] != "prod" {
 		t.Fatalf("current.cluster_name = %v, want prod", current["cluster_name"])
 	}
@@ -74,7 +80,10 @@ func TestBuildClusterPolicyInputIncludesClusterContext(t *testing.T) {
 		t.Fatalf("current.related_managed_addon_count = %v, want 2", current["related_managed_addon_count"])
 	}
 
-	activeAddons := current["active_related_managed_addon_names"].([]interface{})
+	activeAddons, ok := current["active_related_managed_addon_names"].([]interface{})
+	if !ok {
+		t.Fatalf("current[active_related_managed_addon_names] has unexpected type %T", current["active_related_managed_addon_names"])
+	}
 	if len(activeAddons) != 1 || activeAddons[0] != "vpc-cni" {
 		t.Fatalf("active add-ons = %v, want [vpc-cni]", activeAddons)
 	}

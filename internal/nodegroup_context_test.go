@@ -37,19 +37,25 @@ func TestBuildNodegroupPolicyInputIncludesNodegroupContext(t *testing.T) {
 		t.Fatalf("input[nodegroup] should contain the raw node group map")
 	}
 
-	contextMap := input["nodegroup_context"].(map[string]interface{})
-	current := contextMap["current"].(map[string]interface{})
-	if current["cluster_name"] != "prod" {
-		t.Fatalf("current.cluster_name = %v, want prod", current["cluster_name"])
+	contextMap, ok := input["nodegroup_context"].(map[string]interface{})
+	if !ok {
+		t.Fatalf("input[nodegroup_context] has unexpected type %T", input["nodegroup_context"])
 	}
-	if current["subnet_count"] != float64(2) {
-		t.Fatalf("current.subnet_count = %v, want 2", current["subnet_count"])
+	cur, ok := contextMap["current"].(map[string]interface{})
+	if !ok {
+		t.Fatalf("nodegroup_context[current] has unexpected type %T", contextMap["current"])
 	}
-	if current["scale_out_headroom"] != float64(2) {
-		t.Fatalf("current.scale_out_headroom = %v, want 2", current["scale_out_headroom"])
+	if cur["cluster_name"] != "prod" {
+		t.Fatalf("current.cluster_name = %v, want prod", cur["cluster_name"])
 	}
-	if current["desired_at_or_above_min"] != true {
-		t.Fatalf("current.desired_at_or_above_min = %v, want true", current["desired_at_or_above_min"])
+	if cur["subnet_count"] != float64(2) {
+		t.Fatalf("current.subnet_count = %v, want 2", cur["subnet_count"])
+	}
+	if cur["scale_out_headroom"] != float64(2) {
+		t.Fatalf("current.scale_out_headroom = %v, want 2", cur["scale_out_headroom"])
+	}
+	if cur["desired_at_or_above_min"] != true {
+		t.Fatalf("current.desired_at_or_above_min = %v, want true", cur["desired_at_or_above_min"])
 	}
 	if contextMap["cluster"] == nil {
 		t.Fatal("nodegroup_context.cluster should include the parent cluster when available")
