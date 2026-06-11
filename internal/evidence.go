@@ -21,6 +21,7 @@ func BuildClusterEvidenceContext(cluster types.Cluster, region string) ResourceE
 		"region":       region,
 		"cluster_name": clusterName,
 		"cluster_arn":  clusterArn,
+		"resource_arn": clusterArn,
 	}
 
 	return NewResourceEvidenceContext(
@@ -62,6 +63,7 @@ func BuildNodegroupEvidenceContext(nodegroup types.Nodegroup, region string) Res
 		"cluster_name":   clusterName,
 		"nodegroup_name": nodegroupName,
 		"nodegroup_arn":  nodegroupArn,
+		"resource_arn":   nodegroupArn,
 	}
 
 	return NewResourceEvidenceContext(
@@ -103,6 +105,7 @@ func BuildAddonEvidenceContext(addon types.Addon, region string) ResourceEvidenc
 		"cluster_name": clusterName,
 		"addon_name":   addonName,
 		"addon_arn":    addonArn,
+		"resource_arn": addonArn,
 	}
 
 	return NewResourceEvidenceContext(
