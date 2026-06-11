@@ -119,11 +119,14 @@ func clusterAuthenticationMode(cluster types.Cluster) string {
 	return string(cluster.AccessConfig.AuthenticationMode)
 }
 
-func clusterBootstrapCreatorAdminPermissions(cluster types.Cluster) *bool {
+func clusterBootstrapCreatorAdminPermissions(cluster types.Cluster) bool {
 	if cluster.AccessConfig == nil {
-		return nil
+		return false
 	}
-	return cluster.AccessConfig.BootstrapClusterCreatorAdminPermissions
+	if cluster.AccessConfig.BootstrapClusterCreatorAdminPermissions == nil {
+		return false
+	}
+	return *cluster.AccessConfig.BootstrapClusterCreatorAdminPermissions
 }
 
 func clusterSecretsEncryptionConfigured(cluster types.Cluster) bool {
