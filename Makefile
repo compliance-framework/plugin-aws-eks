@@ -15,6 +15,8 @@ ifeq ($(OPA),)
 $(error "opa CLI not found. Please install it: https://www.openpolicyagent.org/docs/latest/cli/")
 endif
 
+.PHONY: test clean build run
+
 ##@ Help
 help: ## Display this concise help, ie only the porcelain target
 	@awk 'BEGIN {FS = ":.*##"; printf "\033[1mUsage\033[0m\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_0-9-]+:.*?##/ { printf "  \033[36m%-30s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
@@ -31,7 +33,7 @@ clean: # Cleanup build artifacts
 
 build: clean ## Build the plugin package
 	@mkdir -p dist/
-	@go build -o dist/plugin main.go
+	@go build -o dist/plugin .
 
 run: build ## Execute the Concom agent with the built plugin
 	@../agent/dist/./concom agent --config ./.config/config.yaml

@@ -1,62 +1,101 @@
-# Compliance Framework Plugin Template
+# AWS EKS CCF Plugin
 
-This is a template for building a compliance framework plugin.
+This plugin collects read-only Amazon EKS data, evaluates CCF Rego policy bundles, and emits evidence back through the CCF agent.
 
-Inspect main.go for a detailed description of how to build the plugin.
+## Supported Resource Families
 
-## Prerequisites
+The collector evaluates policies for:
 
-* GoReleaser https://goreleaser.com/install/
+- EKS clusters
+- EKS managed node groups
+- EKS managed add-ons
 
-## Building
+## How It Fits In CCF
 
-Once you are ready to serve the plugin, you need to build the binaries which can be used by the agent.
+The CCF agent starts this binary through HashiCorp `go-plugin`, passes configuration and policy paths over gRPC, and receives generated evidence through the runner callback. This repository does not call the CCF API directly.
 
-```shell
-goreleaser release --snapshot --clean
-```
+## Default Policy Bundle Mapping
 
-## Usage
+| Repository | Behavior | Primary input |
+| --- | --- | --- |
+| `plugin-aws-eks-policies` | `cluster` | `input.cluster` + `input.cluster_context` |
+| `plugin-aws-eks-nodegroup-policies` | `nodegroup` | `input.nodegroup` + `input.nodegroup_context` |
+| `plugin-aws-eks-addon-policies` | `addon` | `input.addon` + `input.addon_context` |
 
-You can use this plugin by passing it to the compliance agent or by specifying it in the agent config
+Each bundle evaluates one resource family at a time. Cluster context includes summarized related managed node groups and add-ons so cluster-level policies can check required add-ons without evaluating add-on policies against cluster input.
 
-```shell
-agent --plugin=[PATH_TO_YOUR_BINARY]
-```
+## Configuration
+
+The plugin expects:
+
+- AWS credentials through the default AWS SDK credential chain
+- target regions from `config.regions` or `config.region`
+- `AWS_REGION` as a fallback when plugin config does not provide a region
+
+Any agent-supplied `policy_data` is passed through to Rego as `data.*`.
+
+Example agent plugin config:
 
 ```yaml
-# AGENT CONFIG
-
-verbosity: 2
-
-api:
-  url: http://localhost:8080
-
 plugins:
-  # Plugin execution identifier
-  myplugin:
-    # Config mapping passed through to Configure lifecycle event
-    config:
-      anykey: "anyval"
-      policy_labels: "{\"my_key\":\"my_value\"}"
-    # Compatible protocol version: Defaults to 1, can also be determined a plugin image manifest annotation of "org.ccf.plugin.protocol.version=2"
+  aws-eks:
     protocol_version: 2
-    # Source to plugin executable location. Can be an OCI image or local executable
     source: /path/to/dist/plugin
-    # List to all policies to pass to plugin, all may be processed or filtered later via policy_behavior
+    config:
+      regions: "eu-west-2,us-east-1"
     policies:
-       - /path/to/policy/bundle.tar.gz
-    # Policy behaviour can be defined to later filter policies to specific bundles per execution
-    # This is useful if your plugin proccesses more than 1 type of component
-    policy_behavior:
-      string-to-match-to-policy:
-        - "associated-behavior-1"
-    # Policy data is passed to the plugin for evaluation, can be used to customize evaluation parameters
-    policy_data:
-      policy_data_key: "policy_data_value"
-        
-
+      - /path/to/plugin-aws-eks-policies/dist/bundle.tar.gz
+      - /path/to/plugin-aws-eks-nodegroup-policies/dist/bundle.tar.gz
+      - /path/to/plugin-aws-eks-addon-policies/dist/bundle.tar.gz
 ```
 
-You can also use `make run` to build this plugin and execute against the agent, if the agent is located in the parent directory. See Makefile:run
+## Data Collected
 
+Depending on the selected policy bundles, the plugin collects and reuses:
+
+- `ListClusters` and `DescribeCluster`
+- `ListNodegroups` and `DescribeNodegroup`
+- `ListAddons` and `DescribeAddon`
+
+The plugin collects shared regional datasets once and reuses them across resource-family evaluation to reduce AWS API calls.
+
+## IAM Permissions
+
+The AWS principal used by the plugin needs read-only EKS permissions for the configured regions:
+
+```json
+{
+  "Effect": "Allow",
+  "Action": [
+    "eks:ListClusters",
+    "eks:DescribeCluster",
+    "eks:ListNodegroups",
+    "eks:DescribeNodegroup",
+    "eks:ListAddons",
+    "eks:DescribeAddon"
+  ],
+  "Resource": "*"
+}
+```
+
+## Development
+
+Run the local test suite with:
+
+```shell
+go test ./...
+```
+
+Or use the Makefile wrapper:
+
+```shell
+make test
+```
+
+Build the plugin binary with:
+
+```shell
+make build
+```
+
+This writes the compiled plugin to `dist/plugin`.
