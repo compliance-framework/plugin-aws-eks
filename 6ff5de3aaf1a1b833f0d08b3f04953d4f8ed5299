@@ -1,0 +1,5 @@
+lisa-design:
+- Callers, release-please-config.json and the goreleaser release block are copied verbatim from the merged batch-1 master pilot (plugin-github-repositories#26, itself mock-plugin-1 + v1.5.2 pins + master triggers); only the manifest seed differs.
+- Manifest seeded at 0.1.1 = latest final release v0.1.1 (tag commit 96a21ce is an ancestor of master), so no bootstrap-sha.
+- Repo stays on master: every push trigger is [master]; shared workflows read the default branch from the event/API.
+- README describes no release process, so it is unchanged (spec step 9 does not apply).
