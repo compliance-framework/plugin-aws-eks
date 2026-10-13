@@ -3,3 +3,6 @@ lisa-design:
 - Manifest seeded at 0.1.1 = latest final release v0.1.1 (tag commit 96a21ce is an ancestor of master), so no bootstrap-sha.
 - Repo stays on master: every push trigger is [master]; shared workflows read the default branch from the event/API.
 - README describes no release process, so it is unchanged (spec step 9 does not apply).
+
+lisa-selfreview:
+- pass 1 (packs core,go,go-plugin): approve, no findings. Callers have top-level permissions and no third-party actions; actionlint v1.7.12 clean; go build/test pass; goreleaser check + snapshot produce the v0.1.1 asset names.
