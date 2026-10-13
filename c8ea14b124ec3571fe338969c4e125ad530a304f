@@ -1,0 +1,4 @@
+lisa-design:
+- Version bump only: the plugin already stores req.GetPolicyData().AsMap() in Configure and passes it to policyManager.NewPolicyProcessor, and the README already documents policy_data, so no code change was needed for the v0.7.0 policyData parameter.
+- go directive stays at 1.26.1 (already matched agent v0.9.1's requirement); no toolchain line added.
+- goreleaser archives.format deprecation is left for the shared-CI layer (W2-S4-T01), where goreleaser check runs in CI.
