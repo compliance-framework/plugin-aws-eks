@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.4](https://github.com/compliance-framework/plugin-aws-eks/compare/v0.1.3...v0.1.4) (2026-10-29)
+
+
+### Bug Fixes
+
+* **deps:** build with the go1.26.10 toolchain so Renovate can ship Go security fixes ([#26](https://github.com/compliance-framework/plugin-aws-eks/issues/26)) ([db39c27](https://github.com/compliance-framework/plugin-aws-eks/commit/db39c270199d5331fd700aeb31a90485eb18f6e3))
+* **deps:** update aws-sdk-go-v2 monorepo ([#31](https://github.com/compliance-framework/plugin-aws-eks/issues/31)) ([b42d35e](https://github.com/compliance-framework/plugin-aws-eks/commit/b42d35ec969add52f2cefe026812ff37637ed17a))
+* **deps:** update module github.com/aws/aws-sdk-go-v2/service/eks to v1.104.2 ([#29](https://github.com/compliance-framework/plugin-aws-eks/issues/29)) ([111ef91](https://github.com/compliance-framework/plugin-aws-eks/commit/111ef91557aba0e1e5f423047d2186073d530e27))
+
 ## [0.1.3](https://github.com/compliance-framework/plugin-aws-eks/compare/v0.1.2...v0.1.3) (2026-10-28)
 
 
