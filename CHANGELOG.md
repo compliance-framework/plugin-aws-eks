@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.5](https://github.com/compliance-framework/plugin-aws-eks/compare/v0.1.4...v0.1.5) (2026-11-06)
+
+
+### Bug Fixes
+
+* **deps:** update aws-sdk-go-v2 monorepo ([#33](https://github.com/compliance-framework/plugin-aws-eks/issues/33)) ([dab9879](https://github.com/compliance-framework/plugin-aws-eks/commit/dab9879ef8bb705466e64da00e65987938088720))
+* **deps:** update aws-sdk-go-v2 monorepo ([#35](https://github.com/compliance-framework/plugin-aws-eks/issues/35)) ([d11d3cc](https://github.com/compliance-framework/plugin-aws-eks/commit/d11d3ccbe09e9e3bad212a19491a80b7250a1313))
+
 ## [0.1.4](https://github.com/compliance-framework/plugin-aws-eks/compare/v0.1.3...v0.1.4) (2026-11-02)
 
 
